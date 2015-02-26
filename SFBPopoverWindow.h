@@ -52,6 +52,8 @@
 
 - (BOOL) drawsArrow;
 - (void) setDrawsArrow:(BOOL)drawsArrow;
+- (SFBPopoverArrowStyle) arrowStyle;
+- (void) setArrowStyle:(SFBPopoverArrowStyle)style;
 - (CGFloat) arrowWidth;
 - (void) setArrowWidth:(CGFloat)arrowWidth;
 - (CGFloat) arrowHeight;

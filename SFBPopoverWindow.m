@@ -59,7 +59,9 @@
 
 - (NSRect) contentRectForFrameRect:(NSRect)windowFrame
 {
-	return [[self popoverWindowFrame] contentRectForFrameRect:windowFrame];
+	NSRect viewFrame = [[self popoverWindowFrame] contentRectForFrameRect:windowFrame];
+    viewFrame.size.height += [self arrowHeight];
+    return  viewFrame;
 }
 
 - (NSRect) frameRectForContentRect:(NSRect)contentRect
@@ -342,6 +344,17 @@
 	[[self popoverWindowFrame] setNeedsDisplay:YES];
 }
 
+- (SFBPopoverArrowStyle) arrowStyle {
+    
+    return [[self popoverWindowFrame] arrowStyle];
+}
+
+- (void) setArrowStyle:(SFBPopoverArrowStyle)style {
+    
+    [[self popoverWindowFrame] setArrowStyle:style];
+    [[self popoverWindowFrame] setNeedsDisplay:YES];
+}
+
 - (CGFloat) arrowWidth
 {
 	return [[self popoverWindowFrame] arrowWidth];
@@ -422,7 +435,7 @@
 
 - (void) setViewMargin:(CGFloat)viewMargin
 {
-	CGFloat delta = viewMargin - [[self popoverWindowFrame] viewMargin];
+    CGFloat delta = viewMargin - [[self popoverWindowFrame] viewMargin];
 	if(0 == delta)
 		return;
 

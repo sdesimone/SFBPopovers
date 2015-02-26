@@ -46,6 +46,11 @@ typedef NS_ENUM(NSUInteger, SFBPopoverPosition) {
 	SFBPopoverPositionBottomRight   = 11
 };
 
+typedef NS_ENUM(NSUInteger, SFBPopoverArrowStyle) {
+    SFBPopoverArrowStyleNormal = 1,
+    SFBPopoverArrowStyleRounded = 2,
+};
+
 // ========================================
 // A class that controls display of a popover
 // ========================================
@@ -113,6 +118,10 @@ typedef NS_ENUM(NSUInteger, SFBPopoverPosition) {
 // Specifies if the popover window has an arrow pointing toward the attachment point
 - (BOOL) drawsArrow;
 - (void) setDrawsArrow:(BOOL)drawsArrow;
+
+// The arrow shape: can be triangular or rectangular with rounded corners
+- (SFBPopoverArrowStyle) arrowStyle;
+- (void) setArrowStyle:(SFBPopoverArrowStyle)style;
 
 // The width of the arrow, if applicable
 - (CGFloat) arrowWidth;

@@ -341,6 +341,16 @@
 	[_popoverWindow setDrawsArrow:drawsArrow];
 }
 
+- (SFBPopoverArrowStyle) arrowStyle {
+
+    return [_popoverWindow arrowStyle];
+}
+
+- (void) setArrowStyle:(SFBPopoverArrowStyle)style {
+    
+    [_popoverWindow setArrowStyle:style];
+}
+
 - (CGFloat) arrowWidth
 {
 	return [_popoverWindow arrowWidth];

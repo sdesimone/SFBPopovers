@@ -432,53 +432,112 @@
 
 - (void) appendArrowToPath:(NSBezierPath *)path
 {
-	if(!self.drawsArrow)
-		return;
+    if(!self.drawsArrow)
+        return;
+    
+    if (_arrowStyle == SFBPopoverArrowStyleNormal)
+        [self appendTriangularArrowToPath:path];
+    else
+        [self appendRoudedArrowToPath:path];
+}
 
-	NSPoint currentPoint = [path currentPoint];
-	NSPoint tipPoint = currentPoint;
-	NSPoint endPoint = currentPoint;
+- (NSPoint)tipPointForCurrentPoint:(NSPoint) currentPoint {
+    
+    NSPoint tipPoint = currentPoint;
+    switch(self.popoverPosition) {
+        case SFBPopoverPositionLeft:
+        case SFBPopoverPositionLeftTop:
+        case SFBPopoverPositionLeftBottom:
+            // Arrow points towards right. We're starting from the top.
+            tipPoint.x += self.arrowHeight;
+            tipPoint.y -= self.arrowWidth / 2;
+            break;
+            
+        case SFBPopoverPositionRight:
+        case SFBPopoverPositionRightTop:
+        case SFBPopoverPositionRightBottom:
+            // Arrow points towards left. We're starting from the bottom.
+            tipPoint.x -= self.arrowHeight;
+            tipPoint.y += self.arrowWidth / 2;
+            break;
+            
+        case SFBPopoverPositionTop:
+        case SFBPopoverPositionTopLeft:
+        case SFBPopoverPositionTopRight:
+            // Arrow points towards bottom. We're starting from the right.
+            tipPoint.y -= self.arrowHeight;
+            tipPoint.x -= self.arrowWidth / 2;
+            break;
+            
+        case SFBPopoverPositionBottom:
+        case SFBPopoverPositionBottomLeft:
+        case SFBPopoverPositionBottomRight:
+            // Arrow points towards top. We're starting from the left.
+            tipPoint.y += self.arrowHeight;
+            tipPoint.x += self.arrowWidth / 2;
+            break;
+    }
+    return tipPoint;
+}
 
-	switch(self.popoverPosition) {
-		case SFBPopoverPositionLeft:
-		case SFBPopoverPositionLeftTop:
-		case SFBPopoverPositionLeftBottom:
-			// Arrow points towards right. We're starting from the top.
-			tipPoint.x += self.arrowHeight;
-			tipPoint.y -= self.arrowWidth / 2;
-			endPoint.y -= self.arrowWidth;
-			break;
+- (NSPoint)endPointForCurrentPoint:(NSPoint) currentPoint {
+    
+    NSPoint endPoint = currentPoint;
+    switch(self.popoverPosition) {
+        case SFBPopoverPositionLeft:
+        case SFBPopoverPositionLeftTop:
+        case SFBPopoverPositionLeftBottom:
+            // Arrow points towards right. We're starting from the top.
+            endPoint.y -= self.arrowWidth;
+            break;
+            
+        case SFBPopoverPositionRight:
+        case SFBPopoverPositionRightTop:
+        case SFBPopoverPositionRightBottom:
+            // Arrow points towards left. We're starting from the bottom.
+            endPoint.y += self.arrowWidth;
+            break;
+            
+        case SFBPopoverPositionTop:
+        case SFBPopoverPositionTopLeft:
+        case SFBPopoverPositionTopRight:
+            // Arrow points towards bottom. We're starting from the right.
+            endPoint.x -= self.arrowWidth;
+            break;
+            
+        case SFBPopoverPositionBottom:
+        case SFBPopoverPositionBottomLeft:
+        case SFBPopoverPositionBottomRight:
+            // Arrow points towards top. We're starting from the left.
+            endPoint.x += self.arrowWidth;
+            break;
+    }
+    return endPoint;
+}
 
-		case SFBPopoverPositionRight:
-		case SFBPopoverPositionRightTop:
-		case SFBPopoverPositionRightBottom:
-			// Arrow points towards left. We're starting from the bottom.
-			tipPoint.x -= self.arrowHeight;
-			tipPoint.y += self.arrowWidth / 2;
-			endPoint.y += self.arrowWidth;
-			break;
+- (void) appendTriangularArrowToPath:(NSBezierPath *)path
+{
+    if(!self.drawsArrow)
+        return;
+    
+    NSPoint currentPoint = [path currentPoint];
+    [path lineToPoint:[self tipPointForCurrentPoint:currentPoint]];
+    [path lineToPoint:[self endPointForCurrentPoint:currentPoint]];
+}
 
-		case SFBPopoverPositionTop:
-		case SFBPopoverPositionTopLeft:
-		case SFBPopoverPositionTopRight:
-			// Arrow points towards bottom. We're starting from the right.
-			tipPoint.y -= self.arrowHeight;
-			tipPoint.x -= self.arrowWidth / 2;
-			endPoint.x -= self.arrowWidth;
-			break;
+- (void) appendRoudedArrowToPath:(NSBezierPath *)path
+{
+    NSPoint currentPoint = [path currentPoint];
+    NSPoint tipPoint = [self tipPointForCurrentPoint:currentPoint];
+    NSPoint endPoint = [self endPointForCurrentPoint:currentPoint];
+    
+    NSPoint cp1 = (NSPoint) { currentPoint.x, tipPoint.y };
+    NSPoint cp2 = (NSPoint) { currentPoint.x, tipPoint.y };
+    [path curveToPoint:tipPoint controlPoint1:cp1 controlPoint2:cp2];
 
-		case SFBPopoverPositionBottom:
-		case SFBPopoverPositionBottomLeft:
-		case SFBPopoverPositionBottomRight:
-			// Arrow points towards top. We're starting from the left.
-			tipPoint.y += self.arrowHeight;
-			tipPoint.x += self.arrowWidth / 2;
-			endPoint.x += self.arrowWidth;
-			break;
-	}
-
-	[path lineToPoint:tipPoint];
-	[path lineToPoint:endPoint];
+    NSPoint cp3 = (NSPoint) { endPoint.x, tipPoint.y };
+    NSPoint cp4 = (NSPoint) { endPoint.x, tipPoint.y };
+    [path curveToPoint:endPoint controlPoint1:cp3 controlPoint2:cp4];
 }
 
 @end
