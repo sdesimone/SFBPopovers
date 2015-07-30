@@ -33,6 +33,7 @@
 {
 @private
 	NSView * _popoverContentView;
+    NSRect _originalContentViewFrame;
 }
 @end
 
@@ -55,6 +56,13 @@
 	}
 
 	return self;
+}
+
+- (void)dealloc {
+    
+    if (_popoverContentView) {
+        _popoverContentView.frame = _originalContentViewFrame;
+    }
 }
 
 - (NSRect) contentRectForFrameRect:(NSRect)windowFrame
@@ -89,6 +97,10 @@
 	if([_popoverContentView isEqualTo:view])
 		return;
 
+    if (_popoverContentView) {
+        _popoverContentView.frame = _originalContentViewFrame;
+    }
+    
 	SFBPopoverWindowFrame *popoverWindowFrame = [self popoverWindowFrame];
 	if(nil == popoverWindowFrame) {
 		popoverWindowFrame = [[SFBPopoverWindowFrame alloc] initWithFrame:NSZeroRect];
@@ -106,6 +118,7 @@
 	}
 
 	_popoverContentView = view;
+    _originalContentViewFrame = _popoverContentView.frame;
 	NSRect viewFrame = [self contentRectForFrameRect:windowFrame];
 	[_popoverContentView setFrame:viewFrame];
 	[_popoverContentView setAutoresizingMask:NSViewNotSizable];
